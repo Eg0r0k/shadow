@@ -2,17 +2,17 @@
 import { ref } from 'vue'
 import { ShadowRoot } from '../src/shadow'
 
-const show_self = ref(true)
-const show_child = ref(true)
+const showSelf = ref(true)
+const showChild = ref(true)
 </script>
 <template>
     <div>nested</div>
-    <button @click="show_self = !show_self">Toggle self</button>
-    <button @click="show_child = !show_child">Toggle child</button>
-    <shadow-root class="foo">
-        <shadow-root class="bar" v-if="show_self">
-            <p>self exist</p>
-            <p v-if="show_child">child exist</p>
-        </shadow-root>
-    </shadow-root>
+    <button @click="showSelf = !showSelf">Toggle self</button>
+    <button @click="showChild = !showChild">Toggle child</button>
+    <shadowRoot :delegatesFocus="true" v-if="showSelf">
+        <article>
+            <p>self exists</p>
+            <p v-if="showChild">child exists</p>
+        </article>
+    </shadowRoot>
 </template>

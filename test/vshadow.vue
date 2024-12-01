@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
-const show_self = ref(true)
-const show_child = ref(true)
+import { ShadowRoot } from '../src/shadow'
+const showSelf = ref(true)
+const showChild = ref(true)
 </script>
 <template>
     <div>v-shadow</div>
-    <button @click="show_self = !show_self">Toggle self</button>
-    <button @click="show_child = !show_child">Toggle child</button>
-    <section v-shadow v-if="show_self">
+    <button @click="showSelf = !showSelf">Toggle self</button>
+    <button @click="showChild = !showChild">Toggle child</button>
+    <shadow-root mode="closed" :delegatesFocus="true" v-if="showSelf">
         <article>
-            <p>self exist</p>
-            <p v-if="show_child">child exist</p>
+            <p>self exists</p>
+            <p v-if="showChild">child exists</p>
         </article>
-    </section>
+    </shadow-root>
 </template>
