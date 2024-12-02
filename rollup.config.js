@@ -1,4 +1,4 @@
-import { terser } from "rollup-plugin-terser"
+import { terser } from 'rollup-plugin-terser'
 import virtual from '@rollup/plugin-virtual'
 import typescript from 'rollup-plugin-typescript2'
 
@@ -14,9 +14,7 @@ export default [
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-        ],
+        plugins: [typescript()],
     },
     // node esm
     {
@@ -29,9 +27,7 @@ export default [
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-        ],
+        plugins: [typescript()],
     },
     // cjs
     {
@@ -44,9 +40,7 @@ export default [
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-        ],
+        plugins: [typescript()],
     },
     // cjs min
     {
@@ -59,10 +53,7 @@ export default [
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-            terser(),
-        ],
+        plugins: [typescript(), terser()],
     },
     // browser umd
     {
@@ -73,14 +64,12 @@ export default [
             name: 'shadow',
             exports: 'named',
             globals: {
-                vue: 'Vue'
+                vue: 'Vue',
             },
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-        ],
+        plugins: [typescript()],
     },
     // browser umd min
     {
@@ -91,15 +80,12 @@ export default [
             name: 'shadow',
             exports: 'named',
             globals: {
-                vue: 'Vue'
+                vue: 'Vue',
             },
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-            terser(),
-        ],
+        plugins: [typescript(), terser()],
     },
     // esm
     {
@@ -112,9 +98,7 @@ export default [
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-        ],
+        plugins: [typescript()],
     },
     // esm min
     {
@@ -127,10 +111,7 @@ export default [
             sourcemap: true,
         },
         external: ['vue'],
-        plugins: [
-            typescript(),
-            terser(),
-        ],
+        plugins: [typescript(), terser()],
     },
     // browser esm
     {
@@ -146,9 +127,9 @@ export default [
             typescript(),
             virtual({
                 vue: `const { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive } = globalThis.Vue;
-export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive }`
+export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive }`,
             }),
-        ]
+        ],
     },
     // browser esm min
     {
@@ -164,10 +145,10 @@ export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, 
             typescript(),
             virtual({
                 vue: `const { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive } = globalThis.Vue;
-export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive }`
+export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive }`,
             }),
             terser(),
-        ]
+        ],
     },
     // browser esm cdn
     {
@@ -182,9 +163,9 @@ export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, 
         plugins: [
             typescript(),
             virtual({
-                vue: `export * from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.runtime.esm-browser.js'`
+                vue: `export * from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.runtime.esm-browser.js'`,
             }),
-        ]
+        ],
     },
     // browser esm cdn min
     {
@@ -199,9 +180,9 @@ export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, 
         plugins: [
             typescript(),
             virtual({
-                vue: `export * from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.runtime.esm-browser.prod.js'`
+                vue: `export * from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.runtime.esm-browser.prod.js'`,
             }),
             terser(),
-        ]
+        ],
     },
 ]

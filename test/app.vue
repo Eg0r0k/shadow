@@ -6,10 +6,10 @@ const showSelf = ref(true)
 const showChild = ref(true)
 
 const ex = ref<ShadowRootExpose>()
-watch(ex, ex => console.log(ex?.shadowRoot))
+watch(ex, ex => console.log(ex?.shadow_root))
 
 const adoptedStyleSheets = new CSSStyleSheet()
-    ; (adoptedStyleSheets as any).replace('p { color: green }')
+;(adoptedStyleSheets as any).replace('p { color: green }')
 </script>
 <template>
     <div>default</div>
