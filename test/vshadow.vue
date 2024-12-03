@@ -5,7 +5,7 @@ const show_self = ref(true)
 const show_child = ref(true)
 </script>
 <template>
-    <div>v-shadow</div>
+    <div>Deprecated v-shadow</div>
     <button @click="show_self = !show_self">Toggle self</button>
     <button @click="show_child = !show_child">Toggle child</button>
     <section v-shadow v-if="show_self">

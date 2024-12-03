@@ -5,6 +5,7 @@
         "outDir": "./tsout",
         "strict": true,
         "declaration": true,
+        "noImplicitAny": false,
         "moduleResolution": "node",
         "sourceMap": true,
         "jsx": "react",

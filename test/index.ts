@@ -4,12 +4,13 @@ import VShadowVue from './vshadow.vue'
 import AppVue from './app.vue'
 import NestedVue from './nested.vue'
 import AbstractVue from './abstract.vue'
-
+import ClosedVue from './closed.vue'
 const components = [
     { component: VShadowVue, mountPoint: '#vshadow' },
     { component: AppVue, mountPoint: '#app' },
     { component: NestedVue, mountPoint: '#nested' },
     { component: AbstractVue, mountPoint: '#abstract' },
+    { component: ClosedVue, mountPoint: '#closed' },
 ]
 
 const mountApp = ({ component, mountPoint }) => {

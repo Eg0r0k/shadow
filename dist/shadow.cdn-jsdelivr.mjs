@@ -6,45 +6,43 @@ import {
     reactive,
     onBeforeMount,
     onMounted,
+    watch,
     Teleport,
 } from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.runtime.esm-browser.js'
 
+function withType() {
+    return function (obj) {
+        return obj
+    }
+}
+
+const VIRTUAL_ROOT = document.createDocumentFragment()
 function makeShadow(el, option) {
     return makeShadowRaw(el, el.childNodes, option)
 }
-function makeShadowRaw(rootEl, childNodes, { mode = 'open', delegatesFocus = false } = { mode: 'open' }) {
+function makeShadowRaw(rootEl, childNodes = [], { mode = 'open', delegatesFocus = false } = {}) {
+    if (rootEl.shadowRoot) {
+        console.error('[shadow] Attach shadow multiple times', rootEl, childNodes)
+        return undefined
+    }
+    if (mode !== 'open' && mode !== 'closed') {
+        console.error(`[shadow] Invalid mode: ${mode}. It should be 'open' or 'closed'.`)
+        return undefined
+    }
     try {
-        const oldroot = rootEl.shadowRoot
-        if (oldroot != null) {
-            console.error('[shadow] Attach shadow multiple times', rootEl, childNodes, oldroot)
-            return
-        } else {
-            const shadow_root = rootEl.attachShadow({ mode, delegatesFocus })
-            if (childNodes) putDomIntoShadow(shadow_root, childNodes)
-            return shadow_root
-        }
-    } catch (e) {
-        console.error('[shadow] make shadow-root failed', rootEl, childNodes)
-        console.error(e)
+        const shadowRoot = rootEl.attachShadow({ mode, delegatesFocus })
+        putDomIntoShadow(shadowRoot, childNodes)
+        return shadowRoot
+    } catch (error) {
+        console.error('[shadow] make shadow-root failed', rootEl, childNodes, error)
+        return undefined
     }
 }
-// function removeShadow(rootEl: Element): Element {
-//     const newroot = rootEl.cloneNode() as Element
-//     while (rootEl.hasChildNodes()) {
-//         newroot.appendChild(rootEl.firstChild!)
-//     }
-//     rootEl.parentElement!.replaceChild(newroot, rootEl)
-//     console.log('removeShadow', newroot)
-//     return newroot
-// }
-function putDomIntoShadow(shadow_root, childNodes) {
-    const fragment = document.createDocumentFragment()
-    for (const node of childNodes) {
-        fragment.appendChild(node)
+function putDomIntoShadow(shadowRoot, childNodes) {
+    if (childNodes) {
+        shadowRoot.append(...Array.from(childNodes))
     }
-    shadow_root.appendChild(fragment)
 }
-const virtual_root = document.createDocumentFragment()
 const ShadowStyle = defineComponent({
     props: {
         media: String,
@@ -73,6 +71,9 @@ const ShadowRoot = withType()(
                 type: String,
                 default: 'div',
             },
+            adoptedStyleSheets: {
+                type: Array,
+            },
         },
         emits: ['error'],
         setup(props, { slots, expose, emit }) {
@@ -80,29 +81,30 @@ const ShadowRoot = withType()(
             const el = ref()
             const teleport_el = ref()
             const shadow_root = ref()
-            const teleport_target = computed(() => shadow_root.value ?? virtual_root)
-            const ex = reactive({
+            const teleport_target = computed(() => shadow_root.value ?? VIRTUAL_ROOT)
+            const expose_data = reactive({
                 shadow_root,
             })
-            expose(ex)
+            expose(expose_data)
             onBeforeMount(() => {
                 abstract.value = props.abstract
             })
             onMounted(() => {
+                const parent = teleport_el.value?.parentElement
                 try {
-                    if (abstract.value) {
-                        if (teleport_el.value.parentElement.shadowRoot) {
-                            shadow_root.value = teleport_el.value.parentElement.shadowRoot
-                        } else {
-                            shadow_root.value = makeShadowRaw(teleport_el.value.parentElement, void 0, {
-                                mode: props.mode,
-                                delegatesFocus: props.delegatesFocus,
-                            })
-                        }
-                    } else {
-                        shadow_root.value = makeShadowRaw(el.value, void 0, { mode: props.mode, delegatesFocus: props.delegatesFocus })
+                    shadow_root.value = abstract.value
+                        ? parent?.shadowRoot || makeShadowRaw(parent, undefined, { mode: props.mode, delegatesFocus: props.delegatesFocus })
+                        : makeShadowRaw(el.value, undefined, { mode: props.mode, delegatesFocus: props.delegatesFocus })
+                } catch (e) {
+                    emit('error', e)
+                }
+            })
+            watch([shadow_root, () => props.adoptedStyleSheets], ([shadowRoot, adoptedStyleSheets]) => {
+                if (!shadowRoot || !adoptedStyleSheets) return
+                try {
+                    if ('adoptedStyleSheets' in shadowRoot) {
+                        shadowRoot.adoptedStyleSheets = adoptedStyleSheets
                     }
-                    shadow_root.value?.styleSheets
                 } catch (e) {
                     console.error(e)
                     emit('error', e)
@@ -118,17 +120,15 @@ const ShadowRoot = withType()(
         Style: ShadowStyle,
     })
 )
-function withType() {
-    return obj => obj
+const shadowDirective = {
+    beforeMount(el) {
+        console.warn('[VueShadowDom] Deprecated v-shadow directive, use <shadow-root> component')
+        makeShadow(el, { mode: 'closed', delegatesFocus: true })
+    },
 }
 function install(app) {
     app.component('shadow-root', ShadowRoot)
-    app.directive('shadow', {
-        beforeMount(el) {
-            console.warn('[VueShadowDom] Deprecated v-shadow directive, use <shadow-root> component')
-            makeShadow(el)
-        },
-    })
+    app.directive('shadow', shadowDirective)
 }
 var shadow = { ShadowRoot, ShadowStyle, shadow_root: ShadowRoot, shadow_style: ShadowStyle, install }
 

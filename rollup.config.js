@@ -125,11 +125,12 @@ export default [
         },
         plugins: [
             typescript(),
+            typescript(),
             virtual({
-                vue: `const { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive } = globalThis.Vue;
-export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive }`,
+                vue: `export * from 'globalThis.Vue';`,
             }),
         ],
+        external: ['globalThis.Vue'],
     },
     // browser esm min
     {
@@ -144,11 +145,11 @@ export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, 
         plugins: [
             typescript(),
             virtual({
-                vue: `const { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive } = globalThis.Vue;
-export { defineComponent, h, ref, Teleport, onBeforeMount, onMounted, computed, reactive }`,
+                vue: `export * from 'globalThis.Vue';`,
             }),
             terser(),
         ],
+        external: ['globalThis.Vue'],
     },
     // browser esm cdn
     {

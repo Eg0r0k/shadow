@@ -240,12 +240,12 @@ Will output
 
     ### Expose
 
-              ```typescript
-              const ex = ref<ShadowRootExpose>()
-              ```
-              ```html
-              <shadow-root ref="ex"></shadow-root>
-              ```
+                    ```typescript
+                    const ex = ref<ShadowRootExpose>()
+                    ```
+                    ```html
+                    <shadow-root ref="ex"></shadow-root>
+                    ```
 
     - `shadow_root`
 

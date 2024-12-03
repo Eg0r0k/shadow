@@ -1,3 +1,5 @@
-export function withType<W>(): <T>(obj: T) => T & W {
-    return obj => obj as any
+export function withType<W>() {
+    return function <T>(obj: T): T & W {
+        return obj as T & W
+    }
 }

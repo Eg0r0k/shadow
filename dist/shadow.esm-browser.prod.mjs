@@ -1,83 +1,96 @@
-const { defineComponent: e, h: o, ref: t, Teleport: a, onBeforeMount: n, onMounted: s, computed: r, reactive: d } = globalThis.Vue
-function l(e, o) {
-    return u(e, e.childNodes, o)
+import {
+    defineComponent as e,
+    h as o,
+    ref as t,
+    computed as a,
+    reactive as s,
+    onBeforeMount as d,
+    onMounted as r,
+    watch as l,
+    Teleport as n,
+} from 'globalThis.Vue'
+const c = document.createDocumentFragment()
+function u(e, o) {
+    return i(e, e.childNodes, o)
 }
-function u(e, o, { mode: t = 'open', delegatesFocus: a = !1 } = { mode: 'open' }) {
-    try {
-        const n = e.shadowRoot
-        if (null != n) return void console.error('[shadow] Attach shadow multiple times', e, o, n)
-        {
-            const n = e.attachShadow({ mode: t, delegatesFocus: a })
+function i(e, o = [], { mode: t = 'open', delegatesFocus: a = !1 } = {}) {
+    if (e.shadowRoot) console.error('[shadow] Attach shadow multiple times', e, o)
+    else if ('open' === t || 'closed' === t)
+        try {
+            const s = e.attachShadow({ mode: t, delegatesFocus: a })
             return (
-                o &&
-                    (function (e, o) {
-                        const t = document.createDocumentFragment()
-                        for (const e of o) t.appendChild(e)
-                        e.appendChild(t)
-                    })(n, o),
-                n
+                (function (e, o) {
+                    o && e.append(...Array.from(o))
+                })(s, o),
+                s
             )
+        } catch (t) {
+            return void console.error('[shadow] make shadow-root failed', e, o, t)
         }
-    } catch (t) {
-        console.error('[shadow] make shadow-root failed', e, o), console.error(t)
-    }
+    else console.error(`[shadow] Invalid mode: ${t}. It should be 'open' or 'closed'.`)
 }
-const c = document.createDocumentFragment(),
-    i = e({
+const h = e({
         props: { media: String, nonce: String },
         setup:
             (e, { slots: t }) =>
             () =>
                 o('style', { media: e.media, nonce: e.nonce }, t.default?.()),
     }),
-    h = e({
+    p = e({
         props: {
             mode: { type: String, default: 'open' },
             delegatesFocus: { type: Boolean, default: !1 },
             abstract: { type: Boolean, default: !1 },
             tag: { type: String, default: 'div' },
+            adoptedStyleSheets: { type: Array },
         },
         emits: ['error'],
-        setup(e, { slots: l, expose: i, emit: h }) {
+        setup(e, { slots: u, expose: h, emit: p }) {
             const m = t(!1),
-                p = t(),
-                v = t(),
+                w = t(),
                 f = t(),
-                w = r(() => f.value ?? c)
+                y = t(),
+                S = a(() => y.value ?? c)
             return (
-                i(d({ shadow_root: f })),
-                n(() => {
+                h(s({ shadow_root: y })),
+                d(() => {
                     m.value = e.abstract
                 }),
-                s(() => {
+                r(() => {
+                    const o = f.value?.parentElement
                     try {
-                        m.value
-                            ? v.value.parentElement.shadowRoot
-                                ? (f.value = v.value.parentElement.shadowRoot)
-                                : (f.value = u(v.value.parentElement, void 0, { mode: e.mode, delegatesFocus: e.delegatesFocus }))
-                            : (f.value = u(p.value, void 0, { mode: e.mode, delegatesFocus: e.delegatesFocus })),
-                            f.value?.styleSheets
+                        y.value = m.value
+                            ? o?.shadowRoot || i(o, void 0, { mode: e.mode, delegatesFocus: e.delegatesFocus })
+                            : i(w.value, void 0, { mode: e.mode, delegatesFocus: e.delegatesFocus })
                     } catch (e) {
-                        console.error(e), h('error', e)
+                        p('error', e)
                     }
                 }),
+                l([y, () => e.adoptedStyleSheets], ([e, o]) => {
+                    if (e && o)
+                        try {
+                            'adoptedStyleSheets' in e && (e.adoptedStyleSheets = o)
+                        } catch (e) {
+                            console.error(e), p('error', e)
+                        }
+                }),
                 () => {
-                    const t = o(a, { ref: v, to: w.value }, [l.default?.()])
-                    return m.value ? t : o(e.tag, { ref: p }, t)
+                    const t = o(n, { ref: f, to: S.value }, [u.default?.()])
+                    return m.value ? t : o(e.tag, { ref: w }, t)
                 }
             )
         },
-        install: m,
-        Style: i,
-    })
-function m(e) {
-    e.component('shadow-root', h),
-        e.directive('shadow', {
-            beforeMount(e) {
-                console.warn('[VueShadowDom] Deprecated v-shadow directive, use <shadow-root> component'), l(e)
-            },
-        })
+        install: w,
+        Style: h,
+    }),
+    m = {
+        beforeMount(e) {
+            console.warn('[VueShadowDom] Deprecated v-shadow directive, use <shadow-root> component'), u(e, { mode: 'closed', delegatesFocus: !0 })
+        },
+    }
+function w(e) {
+    e.component('shadow-root', p), e.directive('shadow', m)
 }
-var p = { ShadowRoot: h, ShadowStyle: i, shadow_root: h, shadow_style: i, install: m }
-export { h as ShadowRoot, i as ShadowStyle, p as default, m as install, l as makeShadow, u as makeShadowRaw, h as shadow_root, i as shadow_style }
+var f = { ShadowRoot: p, ShadowStyle: h, shadow_root: p, shadow_style: h, install: w }
+export { p as ShadowRoot, h as ShadowStyle, f as default, w as install, u as makeShadow, i as makeShadowRaw, p as shadow_root, h as shadow_style }
 //# sourceMappingURL=shadow.esm-browser.prod.mjs.map
